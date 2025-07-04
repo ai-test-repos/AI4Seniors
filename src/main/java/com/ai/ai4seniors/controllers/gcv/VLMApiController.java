@@ -1,4 +1,4 @@
-package com.ai.ai4seniors.controllers;
+package com.ai.ai4seniors.controllers.gcv;
 
 import com.google.api.client.util.Value;
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -33,7 +33,7 @@ public class VLMApiController {
         return "client is ready!";
     }
 
-    @PostMapping("/ocr")
+    @PostMapping("/gcv")
     public ResponseEntity<String> extractText(@RequestParam("file") MultipartFile file) throws IOException {
         GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("/Users/shri/Desktop/WS/env/gcv-key.json"));
         ImageAnnotatorSettings settings = ImageAnnotatorSettings.newBuilder()
