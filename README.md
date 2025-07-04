@@ -1,0 +1,18 @@
+# AI4Seniors Spring boot app
+
+## Pre Req
+
+1. copy the api key json file under /opt/env/{gcv-key.json}
+2. Once cloned the repo, start the server at 8080
+
+## Test
+
+to check the gcp connection:
+`http://localhost:8080/test`
+
+cURL to test:
+`
+curl -X POST http://localhost:8080/ocr \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your-image.png"
+`
