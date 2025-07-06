@@ -1,4 +1,4 @@
-package com.ai.ai4seniors.controllers.tesseract;
+package com.ai.ai4seniors.controllers.vlm.tesseract;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
