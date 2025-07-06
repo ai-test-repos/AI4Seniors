@@ -13,14 +13,9 @@ import java.util.Set;
 @Service
 public class CSVService {
 
-    @Value("${medication.csv.path}")
-    private String csvFilePath;
+    public String writeOrAppendToCSV(MedicationInfo entry, File csvFile) throws IOException {
 
-
-
-    public String writeOrAppendToCSV(List<MedicationInfo> newEntries) throws IOException {
-        File csvFile = new File(csvFilePath);
-        boolean fileExists = csvFile.exists();
+        boolean fileExists = csvFile.exists() && csvFile.length() > 0;
 
         // Ensure parent directory exists
         File parentDir = csvFile.getParentFile();
@@ -50,13 +45,13 @@ public class CSVService {
             }
         }
 
-        // Prepare to write only new entries
-        try (PrintWriter writer = new PrintWriter(new FileWriter(csvFilePath, true))) {
+        // Prepare to write only new entry
+        try (PrintWriter writer = new PrintWriter(new FileWriter(csvFile, true))) {
             if (!fileExists) {
                 writer.println("Name,Strength,Dosage Instruction,Frequency Hours,Duration Days,Total Doses,Prescriber,Rx Number,Quantity,Pharmacy,Pharmacy Address,Pharmacy Phone,Date Filled,Discard After,Patient Name,Extra");
             }
 
-            for (MedicationInfo info : newEntries) {
+            MedicationInfo info = entry;
                 String sig = buildSignature(
                         info.name(),
                         info.strength(),
@@ -85,8 +80,8 @@ public class CSVService {
                     );
                 }
             }
-        }
-        return csvFilePath;
+
+        return csvFile.getAbsolutePath();
     }
 
     private String buildSignature(String name, String strength, String instruction, String rx, String dateFilled) {
