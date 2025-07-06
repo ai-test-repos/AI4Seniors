@@ -43,4 +43,13 @@ public class StoreApiController {
         return ResponseEntity.ok(entry.toString());
     }
 
+    @PostMapping("/extractData")
+    public ResponseEntity<String> extractData(@RequestParam("files") MultipartFile[] files) throws IOException {
+
+        String ocrResponse = gcvService.getGCVResponse(files);
+        MedicationInfo entry = parseService.parseMedicationText(ocrResponse);
+
+        return ResponseEntity.ok(entry.toString());
+    }
+
 }
