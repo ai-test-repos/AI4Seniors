@@ -1,5 +1,6 @@
 package com.ai.ai4seniors.services;
 
+import com.ai.ai4seniors.data.MedicationInfo;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
@@ -7,13 +8,16 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class DriveService {
@@ -58,6 +62,43 @@ public class DriveService {
             driveService.files().get(fileId).executeMediaAndDownloadTo(output);
         }
         return outFile;
+    }
+
+    public List<MedicationInfo> extractCSV() throws IOException {
+        List<MedicationInfo> reminders = null;
+        try {
+            java.io.File csvFile = downloadCsv();
+            reminders = new ArrayList<>();
+            CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new FileReader(csvFile));
+            for (CSVRecord record : parser) {
+                reminders.add(new MedicationInfo(
+                        record.get("Name"),
+                        record.get("Strength"),
+                        record.get("Dosage Instruction"),
+                        Integer.parseInt(record.get("Frequency Hours")),
+                        Integer.parseInt(record.get("Duration Days")),
+                        Integer.parseInt(record.get("Total Doses")),
+                        record.get("Prescriber"),
+                        record.get("Rx Number"),
+                        record.get("Quantity"),
+                        record.get("Pharmacy"),
+                        record.get("Pharmacy Address"),
+                        record.get("Pharmacy Phone"),
+                        record.get("Date Filled"),
+                        record.get("Discard After"),
+                        record.get("Patient Name")
+                ));
+            }
+            return reminders;
+        }
+     catch (Exception e) {
+            System.out.println(e.getMessage());
+            return reminders;
+        }
+    }
+
+    public String unquote(String val) {
+        return val.replaceAll("^\"|\"$", "").trim();
     }
 
     /**
